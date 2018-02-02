@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Magic API</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="magic-api.js"></script>
+    <link rel="stylesheet" type="text/css" href="magic-api.css">
+</head>
+<body>
+<div class="noPadding">
+    <h1>Magic: The Gathering Card Search</h1>
+    <div id="searchSettings" class="bigContainer">
+        <h3>Search Settings</h3>
+        <button onclick="clearSearch()">Refresh Search Settings</button>
+        <br>
+        <datalist id="suggestions"></datalist>
+        Card name:<input id="data3" type="text"
+             title="Optional: enter text to appear in the card name(s). If multiple terms, separate them with commas."
+                         data-num-options="many">
+        Card type:<input id="data0" type="text"
+                         title="Optional: enter card type(s). If multiple terms, separate them with commas."
+                         onfocus="generateSuggestions(0)" list="suggestions" data-num-options="many"><br>
+        Card subtype:<input id="data1" type="text"
+                            title="Optional: enter card subtype(s). If multiple terms, separate them with commas."
+                          onfocus="generateSuggestions(1)" list="suggestions" data-num-options="many">
+        Card supertype:<input id="data2" type="text"
+                              title="Optional: enter card supertype(s). If multiple terms, separate them with commas."
+                              onfocus="generateSuggestions(2)" list="suggestions" data-num-options="many"><br>
+        Card text:<input id="data4" type="text"
+                    title="Optional: enter text to appear in rules. If multiple terms, separate them with commas."
+                    onfocus="generateSuggestions(4)" list="suggestions" data-num-options="many">
+        Play format:
+        <select id="data9" title="Optional: select the play format for the cards." data-num-options="1">
+            <option value=""></option>
+            <option value="standard">Standard</option>
+            <option value="modern">Modern</option>
+            <option value="legacy">Legacy</option>
+            <option value="vintage">Vintage</option>
+            <option value="commander">Commander</option>
+        </select>
+        Legality:
+        <select id="data10" title="Optional: select legality of the cards." data-num-options="1">
+            <option value=""></option>
+            <option value="legal">Legal</option>
+            <option value="restricted">Restricted</option>
+            <option value="banned">Banned</option>
+        </select>
+        <br>
+        <div id="data7" class="collapsible menu canClick notShown" data-num-options="5">
+            <p><b>Color</b></p>
+            <br>
+            <input id="data7.0" value="white" title="white" type="checkbox">White
+            <input id="data7.1" value="blue" title="blue" type="checkbox">Blue
+            <input id="data7.2" value="black" title="black" type="checkbox">Black
+            <input id="data7.3" value="red" title="red" type="checkbox">Red
+            <input id="data7.4" value="green" title="green" type="checkbox">Green
+            <br>Return:
+            <select id="data8" title="Select what card types you would like returned." data-num-options="1">
+                <option value="">Both single color and multicolor cards</option>
+                <option value="false">Only single color cards</option>
+                <option value="true">Only multicolor cards</option>
+            </select>
+        </div>
+        <div id="data6" class="collapsible menu canClick notShown" data-num-options="4">
+            <p><b>Rarity</b></p>
+            <br>
+            <input id="data6.0" value="common" title="common" type="checkbox">Common
+            <input id="data6.1" value="uncommon" title="uncommon" type="checkbox">Uncommon
+            <input id="data6.2" value="rare" title="rare" type="checkbox">Rare
+            <input id="data6.3" value="mythic" title="mythic" type="checkbox">Mythic Rare
+        </div>
+        <br>
+        <div id="data5" class="collapsible menu canClick notShown" data-num-options="sets">
+            <p><b>Set</b></p>
+            <br>
+            <div id="blocksContainer"></div>
+        </div>
+
+        <br>
+        <button onclick="searchButtonClicked()">Search</button>
+    </div>
+
+    <div class="collapsible bigMenu bigContainer">
+        <b>Cards</b>
+        <br><br>
+        Page number <span>1</span> of <span></span>
+        <div id="resultsContainer"></div>
+    </div>
+</div>
+</body>
+</html>
