@@ -89,3 +89,20 @@ select{
     border:1px solid black;
     margin:10px auto;
 }
+
+h3{
+    margin: 10px auto;
+}
+
+.pageButton{
+    display: inline-block;
+    background-color: cadetblue;
+    border-radius: 10px;
+}
+
+.floatLeft{
+    float: left;
+}
+.floatRight{
+    float: right;
+}

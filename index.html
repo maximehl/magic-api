@@ -17,7 +17,7 @@
         <datalist id="suggestions"></datalist>
         Card name:<input id="data3" type="text"
              title="Optional: enter text to appear in the card name(s). If multiple terms, separate them with commas."
-                         data-num-options="many">
+                         data-num-options="many" value="Stirrings">
         Card type:<input id="data0" type="text"
                          title="Optional: enter card type(s). If multiple terms, separate them with commas."
                          onfocus="generateSuggestions(0)" list="suggestions" data-num-options="many"><br>
@@ -50,11 +50,11 @@
         <div id="data7" class="collapsible menu canClick notShown" data-num-options="5">
             <p><b>Color</b></p>
             <br>
-            <input id="data7.0" value="white" title="white" type="checkbox">White
-            <input id="data7.1" value="blue" title="blue" type="checkbox">Blue
-            <input id="data7.2" value="black" title="black" type="checkbox">Black
-            <input id="data7.3" value="red" title="red" type="checkbox">Red
-            <input id="data7.4" value="green" title="green" type="checkbox">Green
+            <input id="data70" value="white" title="white" type="checkbox">White
+            <input id="data71" value="blue" title="blue" type="checkbox">Blue
+            <input id="data72" value="black" title="black" type="checkbox">Black
+            <input id="data73" value="red" title="red" type="checkbox">Red
+            <input id="data74" value="green" title="green" type="checkbox">Green
             <br>Return:
             <select id="data8" title="Select what card types you would like returned." data-num-options="1">
                 <option value="">Both single color and multicolor cards</option>
@@ -65,10 +65,10 @@
         <div id="data6" class="collapsible menu canClick notShown" data-num-options="4">
             <p><b>Rarity</b></p>
             <br>
-            <input id="data6.0" value="common" title="common" type="checkbox">Common
-            <input id="data6.1" value="uncommon" title="uncommon" type="checkbox">Uncommon
-            <input id="data6.2" value="rare" title="rare" type="checkbox">Rare
-            <input id="data6.3" value="mythic" title="mythic" type="checkbox">Mythic Rare
+            <input id="data60" value="common" title="common" type="checkbox">Common
+            <input id="data61" value="uncommon" title="uncommon" type="checkbox">Uncommon
+            <input id="data62" value="rare" title="rare" type="checkbox">Rare
+            <input id="data63" value="mythic" title="mythic" type="checkbox">Mythic Rare
         </div>
         <br>
         <div id="data5" class="collapsible menu canClick notShown" data-num-options="sets">
@@ -81,12 +81,25 @@
         <button onclick="searchButtonClicked()">Search</button>
     </div>
 
-    <div class="collapsible bigMenu bigContainer">
-        <b>Cards</b>
-        <br><br>
-        Page number <span>1</span> of <span></span>
-        <div id="resultsContainer"></div>
+    <div class="collapsible menu bigMenu canClick bigContainer" id="temp">
+        <h3>Cards</h3>
+        <br>
+        <!--<div id="firstPage" class="pageButton canClick floatLeft" onclick="changePage(0)">First Page</div>-->
+        <div id="prevPage" class="pageButton canClick floatLeft" onclick="changePage('--')">Previous Page</div>
+        Page number <span>1</span><!-- of <span></span>-->
+        <div id="nextPage" class="pageButton canClick floatRight" onclick="changePage('++')">Next Page</div>
+        <!--<div id="goToPage" class="pageButton canClick floatRight"
+                 onclick="changePage($('#pageWanted').val()); $('#pageWanted').val(0);">Go to Page:</div>
+            <input id="pageWanted" class="floatRight" type="number"
+                   title="Enter the page of results that you'd like to see.">-->
+        <div id="resultsContainerCards"></div>
     </div>
+    <!--<div class="collapsible menu bigMenu canClick bigContainer">
+        <h3>My Decks</h3>
+        <br>
+        Page number <span>1</span> of <span></span>
+        <div id="resultsContainerDecks"></div>
+    </div>-->
 </div>
 </body>
 </html>

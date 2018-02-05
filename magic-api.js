@@ -77,7 +77,9 @@ var suggestions = [
 ];
 
 $(document).ready(function(){
-    addCollapsibleTriggers($(".collapsible"));
+    $(".collapsible").each(function(){
+        addCollapsibleTriggers($(this));
+    });
     buildSetMenu();
     $("input, select").on("click", function(){
         event.stopPropagation();
@@ -85,7 +87,7 @@ $(document).ready(function(){
 });
 
 function addCollapsibleTriggers(objectObject){
-    objectObject.css("height", objectObject.children().first().height());
+    objectObject.css("height", objectObject.children().first().outerHeight(true));
     if(objectObject.hasClass("menu")){
         objectObject.on("click", function(){
             $(this).toggleClass("shown");
@@ -93,7 +95,7 @@ function addCollapsibleTriggers(objectObject){
             if($(this).hasClass("shown")){
                 $(this).css("height", getHeightNeeded($(this)));
             }else{
-                $(this).css("height", $(this).children().first().height());
+                $(this).css("height", $(this).children().first().outerHeight(true));
             }
         });
     }else{
@@ -105,7 +107,7 @@ function addCollapsibleTriggers(objectObject){
             }
         });
         objectObject.on("mouseleave", function(){
-            $(this).css("height", $(this).children().first().height());
+            $(this).css("height", $(this).children().first().outerHeight(true));
             var parentObjects = $(this).parents(".collapsible");
             if(parentObjects.length>0){
                 parentObjects.css("height", getHeightNeeded(parentObjects));
@@ -252,7 +254,6 @@ function searchButtonClicked(){
         var n;
         if(dataReps==="many"){
             dataObject = document.getElementById("data" + i).value;
-            console.log(dataObject);
             var searchTerm = "";
             for(n = 0; n<dataObject.length; n++){
                 if(dataObject[n]===" "){
@@ -286,24 +287,15 @@ function searchButtonClicked(){
             }
         }else{
             dataObject.find("input:checked").each(function(){
-                console.log($(this).value);
                 addURLCueMark(i);
-                searchURL+=$(this).value;
+                searchURL+=$(this).val();
             });
-            /*dataReps = parseInt(dataReps);
-            for(n = 0; n<dataReps; n++){
-                dataObject = $("#data" + i + "." + n);
-                if(dataObject.is(":checked")){
-                    addURLCueMark(i);
-                    searchURL+=dataObject.value;
-                }
-            }*/
         }
     }
     searchPage = 1;
     searchURL+="&page=0";
     console.log(searchURL);
-    //grabJSON();
+    grabJSON();
 }
 
 function addURLCueMark(iValue){
@@ -317,6 +309,7 @@ function addURLCueMark(iValue){
 
 function clearSearch(){
     var dataReps;
+    var dataObject;
     for(var i = 0; i<10; i++){
         dataObject = $("#data" + i);
         dataReps = dataObject.data("num-options");
@@ -330,22 +323,27 @@ function clearSearch(){
     }
 }
 
-function changePage(newPageNum){
-    searchPage = newPageNum;
+function changePage(newPage){
+    //searchPage = newPageNum;
+    if(newPage==="++"){
+        searchPage++;
+    }else{
+        searchPage--;
+    }
     searchURL = searchURL.slice(0, searchURL.length-1);
     searchURL+=searchPage-1;
     console.log(searchURL);
-    //grabJSON();
+    grabJSON();
 }
 
 function grabJSON(){
     $.ajax({
         url: searchURL,
         type: 'GET',
-        crossDomain: true,
-        dataType: 'jsonp',
+        //crossDomain: true,
+        dataType: 'json',
         success: function(result){
-            //console.log(result); tagHere remember to remove all console.logs!
+            console.log(result);
             buildResults(result);
         },
         error: function(){
@@ -355,9 +353,15 @@ function grabJSON(){
 }
 
 function buildResults(jsonData){
-    //things!
+    for(var i in jsonData){
+        console.log(jsonData[i]);
+        //buildCard(jsonData[i]);
+    }
 }
 
 function buildCard(cardData){
     //things!
 }
+
+//tagHere: remember to delete the default value in the name entry place
+//tagHere remember to remove all console.logs!
