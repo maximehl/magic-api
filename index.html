@@ -17,7 +17,7 @@
         <datalist id="suggestions"></datalist>
         Card name:<input id="data3" type="text"
              title="Optional: enter text to appear in the card name(s). If multiple terms, separate them with commas."
-                         data-num-options="many" value="Stirrings">
+                         data-num-options="many">
         Card type:<input id="data0" type="text"
                          title="Optional: enter card type(s). If multiple terms, separate them with commas."
                          onfocus="generateSuggestions(0)" list="suggestions" data-num-options="many"><br>
@@ -81,18 +81,20 @@
         <button onclick="searchButtonClicked()">Search</button>
     </div>
 
-    <div class="collapsible menu bigMenu canClick bigContainer" id="temp">
+    <div id="searchResults" class="collapsible menu bigMenu canClick bigContainer">
         <h3>Cards</h3>
-        <br>
-        <!--<div id="firstPage" class="pageButton canClick floatLeft" onclick="changePage(0)">First Page</div>-->
-        <div id="prevPage" class="pageButton canClick floatLeft" onclick="changePage('--')">Previous Page</div>
-        Page number <span>1</span><!-- of <span></span>-->
-        <div id="nextPage" class="pageButton canClick floatRight" onclick="changePage('++')">Next Page</div>
-        <!--<div id="goToPage" class="pageButton canClick floatRight"
-                 onclick="changePage($('#pageWanted').val()); $('#pageWanted').val(0);">Go to Page:</div>
-            <input id="pageWanted" class="floatRight" type="number"
-                   title="Enter the page of results that you'd like to see.">-->
-        <div id="resultsContainerCards"></div>
+        <div id="navBar">
+        	<br>
+		    <!--<div id="firstPage" class="pageButton canClick" onclick="changePage(0)">First Page</div>-->
+		    <div id="prevPage" class="pageButton canClick" onclick="changePage('--')">Previous Page</div>
+		    <div class="centerMe">Page number <span id="currentPageNumber">1</span></div><!-- of <span></span>-->
+		    <div id="nextPage" class="pageButton canClick" onclick="changePage('++')">Next Page</div>
+		    <!--<div id="goToPage" class="pageButton canClick"
+		             onclick="changePage($('#pageWanted').val()); $('#pageWanted').val(0);">Go to Page:</div>
+		        <input id="pageWanted" class="floatRight" type="number"
+		               title="Enter the page of results that you'd like to see.">-->
+        </div>
+        <div id="resultsContainerCards" class="noPadding"><br>No results yet!</div>
     </div>
     <!--<div class="collapsible menu bigMenu canClick bigContainer">
         <h3>My Decks</h3>

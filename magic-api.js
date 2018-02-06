@@ -84,6 +84,9 @@ $(document).ready(function(){
     $("input, select").on("click", function(){
         event.stopPropagation();
     });
+    $("#navBar").on("click", function(){
+        event.stopPropagation();
+    });
 });
 
 function addCollapsibleTriggers(objectObject){
@@ -242,9 +245,10 @@ function generateSuggestions(suggestionListIndex){
 
 var urlSearchTerms = ["type", "subtype", "supertype", "name", "oracle", "set",
     "rarity", "color", "multicolor", "format", "status"];
-var searchPage = 1;
+var searchPage = 0;
 var searchURL = 'https://api.deckbrew.com/mtg/cards';
 function searchButtonClicked(){
+    toggleCardsDisplay("hide");
     searchURL = 'https://api.deckbrew.com/mtg/cards';
     var dataObject;
     var dataReps;
@@ -279,8 +283,8 @@ function searchButtonClicked(){
                 addURLCueMark(i);
                 searchURL+=$(this).data("letter-code").toLowerCase();
             });
-        }else if(dataReps==="1"){
-            dataObject = dataObject.value;
+        }else if(dataReps=="1"){
+            dataObject = dataObject.val();
             if(dataObject!==""){ //tagHere: if this doesn't work, try dataObject.length>0
                 addURLCueMark(i);
                 searchURL+=dataObject;
@@ -292,9 +296,10 @@ function searchButtonClicked(){
             });
         }
     }
-    searchPage = 1;
-    searchURL+="&page=0";
-    console.log(searchURL);
+    searchPage = 0;
+    $("#currentPage").val(searchPage);
+    //searchURL+="&page=0";
+    //console.log(searchURL);
     grabJSON();
 }
 
@@ -313,7 +318,7 @@ function clearSearch(){
     for(var i = 0; i<10; i++){
         dataObject = $("#data" + i);
         dataReps = dataObject.data("num-options");
-        if(dataReps==="many" || dataReps==="1"){
+        if(dataReps==="many" || dataReps=="1"){
             dataObject.val("");
         }else if(dataReps==="sets"){
             dataObject.find(".selected").removeClass("selected");
@@ -321,18 +326,56 @@ function clearSearch(){
             dataObject.find("input:checked").prop("checked", false);
         }
     }
+    //tagHere: this might cause an error?
+    toggleCardsDisplay("hide");
+    $("#navBar").hide();
+    $("#resultsContainerCards").empty();
+}
+
+function toggleCardsDisplay(whichWay){
+    //waitForImages();
+    var searchResults = $("#searchResults");
+    if(whichWay==="hide"){
+        searchResults.removeClass("shown");
+        searchResults.addClass("notShown");
+    }else if(whichWay==="show"){
+        searchResults.addClass("shown");
+        searchResults.removeClass("notShown");
+    }else{
+        searchResults.toggleClass("shown");
+        searchResults.toggleClass("notShown");
+    }
+    if(searchResults.hasClass("shown")){
+        searchResults.css("height", getHeightNeeded(searchResults));
+    }else{
+        searchResults.css("height", searchResults.children().first().outerHeight(true));
+    }
 }
 
 function changePage(newPage){
     //searchPage = newPageNum;
+    //var oldPageDigits = searchPage.toString().length;
+    toggleCardsDisplay("hide");
+    var oldPage = searchPage;
     if(newPage==="++"){
         searchPage++;
     }else{
         searchPage--;
     }
-    searchURL = searchURL.slice(0, searchURL.length-1);
-    searchURL+=searchPage-1;
-    console.log(searchURL);
+    
+    if(oldPage===0){
+    	if(searchURL==='https://api.deckbrew.com/mtg/cards'){
+        	searchURL += "?page=";
+	    }else{
+	        searchURL += "&page=";
+	    }   	
+    }else{
+    	searchURL = searchURL.slice(0, searchURL.length-1);
+    }
+    
+    searchURL+=searchPage;
+    $("#currentPageNumber").html(searchPage+1);
+    //console.log(searchURL);
     grabJSON();
 }
 
@@ -343,7 +386,7 @@ function grabJSON(){
         //crossDomain: true,
         dataType: 'json',
         success: function(result){
-            console.log(result);
+            //console.log(result);
             buildResults(result);
         },
         error: function(){
@@ -353,15 +396,91 @@ function grabJSON(){
 }
 
 function buildResults(jsonData){
-    for(var i in jsonData){
-        console.log(jsonData[i]);
-        //buildCard(jsonData[i]);
+	$("#navBar").show();
+	if(searchPage===0){
+		$("#prevPage").css("visibility", "hidden")
+	}else{
+		$("#prevPage").css("visibility", "visible");
+	}
+	if(jsonData.length<100){
+		$("#nextPage").css("visibility", "hidden");
+	}else{
+		$("#nextPage").css("visibility", "visible");
+	}
+	var appendLoc = $("#resultsContainerCards");
+	appendLoc.empty();
+	unloadedImages=0;
+	if(jsonData.length>0){
+		for(var i in jsonData){
+	        appendLoc.append(buildCard(jsonData[i]));
+    	}
+        $("img").each(function(){
+            $(this).on("load", function(){
+                unloadedImages--;
+            });
+        });
+	}else{
+		$("#navBar").hide();
+		if(searchPage===0){
+			appendLoc.append($("<div>Uh oh! This search did not return any results.</div>"));
+		}else{
+			appendLoc.append($("<div>Uh oh! This search page did not return any results.</div>"));
+		}
+	}
+	$(".card").on("click", function(){
+	    event.stopPropagation();
+    });
+    toggleCardsDisplay("show");
+}
+
+var unloadedImages = 0;
+function waitForImages(){
+    while(unloadedImages>0){
+        console.log("unloadedImages");
+        setTimeout(function(){
+            console.log(unloadedImages);
+        }, 200);
     }
 }
 
 function buildCard(cardData){
-    //things!
+	var returnObject = "";
+	var stats = [cardData.name, cardData.types, cardData.subtypes, cardData.colors,
+		cardData.cmc, cardData.cost, cardData.text];
+	var statLabels = ["data-card-name=", "data-card-types=", "data-card-subtypes=",
+		"data-card-colors=", "data-card-cmc=", "data-card-cost=", "data-card-text="];
+	var i;
+	var baseStats="";
+	for(i=0; i<stats.length; i++){
+		if(isNaN(stats[i])===false){
+			baseStats+=" " + statLabels[i] + "'" + stats[i] + "'";
+		}
+	}
+	var upperStats = [cardData.editions[0].rarity, cardData.editions[0].multiverse_id,
+			cardData.editions[0].flavor];
+	var upperStatLabels = ["data-card-rarity=", "data-card-multiverse-id=", "data-card-flavor="];
+	if(upperStats[1]!="0"){
+		returnObject+="<div class='card' " + baseStats;
+		for(i=0; i<upperStats.length; i++){
+			if(isNaN(upperStats[i])===false){
+				returnObject+=" " + upperStatLabels[i] + "'" + upperStats[i] + "'";
+			}
+		}
+		returnObject+="><img class='cardImage' src='" + cardData.editions[0].image_url + "'></div>"
+        unloadedImages++;
+	}
+	/*for(i=0; i<cardData.editions.length; i++){
+		upperStats = [cardData.editions[i].rarity, cardData.editions[i].multiverse_id,
+			cardData.editions[i].flavor];
+		if(upperStats[1]!="0"){
+			returnObject+="<div class='card' " + baseStats;
+			for(var n=0; n<upperStats.length; n++){
+				if(isNaN(upperStats[n])===false){
+					returnObject+=" " + upperStatLabels[n] + "'" + upperStats[n] + "'";
+				}
+			}
+			returnObject+="><img class='cardImage' src='" + cardData.editions[i].image_url + "'></div>"
+		}
+	}*/
+    return $(returnObject);
 }
-
-//tagHere: remember to delete the default value in the name entry place
-//tagHere remember to remove all console.logs!
