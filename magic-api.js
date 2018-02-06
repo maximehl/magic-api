@@ -242,7 +242,7 @@ function generateSuggestions(suggestionListIndex){
 
 var urlSearchTerms = ["type", "subtype", "supertype", "name", "oracle", "set",
     "rarity", "color", "multicolor", "format", "status"];
-var searchPage = 1;
+var searchPage = 0;
 var searchURL = 'https://api.deckbrew.com/mtg/cards';
 function searchButtonClicked(){
     searchURL = 'https://api.deckbrew.com/mtg/cards';
@@ -279,8 +279,8 @@ function searchButtonClicked(){
                 addURLCueMark(i);
                 searchURL+=$(this).data("letter-code").toLowerCase();
             });
-        }else if(dataReps==="1"){
-            dataObject = dataObject.value;
+        }else if(dataReps=="1"){
+            dataObject = dataObject.val();
             if(dataObject!==""){ //tagHere: if this doesn't work, try dataObject.length>0
                 addURLCueMark(i);
                 searchURL+=dataObject;
@@ -292,8 +292,9 @@ function searchButtonClicked(){
             });
         }
     }
-    searchPage = 1;
-    searchURL+="&page=0";
+    searchPage = 0;
+    $("#currentPage").val(searchPage);
+    //searchURL+="&page=0";
     console.log(searchURL);
     grabJSON();
 }
@@ -321,17 +322,45 @@ function clearSearch(){
             dataObject.find("input:checked").prop("checked", false);
         }
     }
+    //tagHere: this might cause an error?
+    toggleCardsDisplay();
+    $("#navBar").hide();
+    $("#resultsContainerCards").empty();
+}
+
+function toggleCardsDisplay(){
+	var searchResults = $("#searchResults")
+	searchResults.toggleClass("shown");
+    searchResults.toggleClass("notShown");
+	if(searchResults.hasClass("shown")){
+        searchResults.css("height", getHeightNeeded(searchResults));
+    }else{
+        searchResults.css("height", searchResults.children().first().outerHeight(true));
+    }
 }
 
 function changePage(newPage){
     //searchPage = newPageNum;
+    //var oldPageDigits = searchPage.toString().length;
+    var oldPage = searchPage;
     if(newPage==="++"){
         searchPage++;
     }else{
         searchPage--;
     }
-    searchURL = searchURL.slice(0, searchURL.length-1);
-    searchURL+=searchPage-1;
+    
+    if(oldPage===0){
+    	if(searchURL==='https://api.deckbrew.com/mtg/cards'){
+        	searchURL += "?page=";
+	    }else{
+	        searchURL += "&page=";
+	    }   	
+    }else{
+    	searchURL = searchURL.slice(0, searchURL.length-1);
+    }
+    
+    searchURL+=searchPage;
+    $("#currentPageNumber").val(searchPage+1);
     console.log(searchURL);
     grabJSON();
 }
@@ -353,14 +382,72 @@ function grabJSON(){
 }
 
 function buildResults(jsonData){
-    for(var i in jsonData){
-        console.log(jsonData[i]);
-        //buildCard(jsonData[i]);
-    }
+	$("#navBar").show();
+	if(searchPage===0){
+		$("#prevPage").css("visibility", "hidden")
+	}else{
+		$("#prevPage").css("visibility", "visible");
+	}
+	if(jsonData.length<100){
+		$("#nextPage").css("visibility", "hidden");
+	}else{
+		$("#nextPage").css("visibility", "visible");
+	}
+	var appendLoc = $("#resultsContainerCards");
+	appendLoc.empty();
+	if(jsonData.length>0){
+		for(var i in jsonData){
+	        appendLoc.append(buildCard(jsonData[i]));
+    	}
+	}else{
+		$("#navBar").hide();
+		if(searchPage===0){
+			appendLoc.append($("<div>Uh oh! This search did not return any results.</div>"));
+		}else{
+			appendLoc.append($("<div>Uh oh! This search page did not return any results.</div>"));
+		}
+	}
 }
 
 function buildCard(cardData){
-    //things!
+	var returnObject = "";
+	var stats = [cardData.name, cardData.types, cardData.subtypes, cardData.colors,
+		cardData.cmc, cardData.cost, cardData.text];
+	var statLabels = ["data-card-name=", "data-card-types=", "data-card-subtypes=",
+		"data-card-colors=", "data-card-cmc=", "data-card-cost=", "data-card-text="];
+	var i;
+	var baseStats="";
+	for(i=0; i<stats.length; i++){
+		if(isNaN(stats[i])===false){
+			baseStats+=" " + statLabels[i] + "'" + stats[i] + "'";
+		}
+	}
+	var upperStats = [cardData.editions[0].rarity, cardData.editions[0].multiverse_id,
+			cardData.editions[0].flavor];
+	var upperStatLabels = ["data-card-rarity=", "data-card-multiverse-id=", "data-card-flavor="];
+	if(upperStats[1]!="0"){
+		returnObject+="<div class='card' " + baseStats;
+		for(i=0; i<upperStats.length; i++){
+			if(isNaN(upperStats[i])===false){
+				returnObject+=" " + upperStatLabels[i] + "'" + upperStats[i] + "'";
+			}
+		}
+		returnObject+="><img class='cardImage' src='" + cardData.editions[0].image_url + "'></div>"
+	}
+	/*for(i=0; i<cardData.editions.length; i++){
+		upperStats = [cardData.editions[i].rarity, cardData.editions[i].multiverse_id,
+			cardData.editions[i].flavor];
+		if(upperStats[1]!="0"){
+			returnObject+="<div class='card' " + baseStats;
+			for(var n=0; n<upperStats.length; n++){
+				if(isNaN(upperStats[n])===false){
+					returnObject+=" " + upperStatLabels[n] + "'" + upperStats[n] + "'";
+				}
+			}
+			returnObject+="><img class='cardImage' src='" + cardData.editions[i].image_url + "'></div>"
+		}
+	}*/
+    return $(returnObject);
 }
 
 //tagHere: remember to delete the default value in the name entry place
