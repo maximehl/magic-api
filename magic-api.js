@@ -252,7 +252,7 @@ function searchButtonClicked(){
     searchURL = 'https://api.deckbrew.com/mtg/cards';
     var dataObject;
     var dataReps;
-    for(var i = 0; i<10; i++){
+    for(var i = 0; i<11; i++){
         dataObject = $("#data" + i);
         dataReps = dataObject.data("num-options");
         var n;
@@ -297,9 +297,7 @@ function searchButtonClicked(){
         }
     }
     searchPage = 0;
-    $("#currentPage").val(searchPage);
     //searchURL+="&page=0";
-    //console.log(searchURL);
     grabJSON();
 }
 
@@ -315,7 +313,7 @@ function addURLCueMark(iValue){
 function clearSearch(){
     var dataReps;
     var dataObject;
-    for(var i = 0; i<10; i++){
+    for(var i = 0; i<11; i++){
         dataObject = $("#data" + i);
         dataReps = dataObject.data("num-options");
         if(dataReps==="many" || dataReps=="1"){
@@ -374,19 +372,18 @@ function changePage(newPage){
     }
 
     searchURL+=searchPage;
-    $("#currentPageNumber").html(searchPage+1);
-    //console.log(searchURL);
     grabJSON();
 }
 
 function grabJSON(){
+	//console.log(searchURL);
     $.ajax({
         url: searchURL,
         type: 'GET',
         //crossDomain: true,
         dataType: 'json',
         success: function(result){
-            console.log(result);
+            //console.log(result);
             buildResults(result);
         },
         error: function(){
@@ -397,6 +394,7 @@ function grabJSON(){
 
 var unloadedImages = 0;
 function buildResults(jsonData){
+	$("#currentPageNumber").html(searchPage+1);
    $("#navBar").show();
    if(searchPage===0){
       $("#prevPage").css("visibility", "hidden")
@@ -430,6 +428,7 @@ function buildResults(jsonData){
       }else{
          appendLoc.append($("<div>Uh oh! This search page did not return any results.</div>"));
       }
+      toggleCardsDisplay("show");
    }
    $(".card").on("click", function(){
        event.stopPropagation();
