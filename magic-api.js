@@ -84,9 +84,6 @@ $(document).ready(function(){
     $("input, select").on("click", function(){
         event.stopPropagation();
     });
-    $("#navBar").on("click", function(){
-        event.stopPropagation();
-    });
 });
 
 function addCollapsibleTriggers(objectObject){
@@ -248,7 +245,6 @@ var urlSearchTerms = ["type", "subtype", "supertype", "name", "oracle", "set",
 var searchPage = 0;
 var searchURL = 'https://api.deckbrew.com/mtg/cards';
 function searchButtonClicked(){
-    toggleCardsDisplay("hide");
     searchURL = 'https://api.deckbrew.com/mtg/cards';
     var dataObject;
     var dataReps;
@@ -299,7 +295,7 @@ function searchButtonClicked(){
     searchPage = 0;
     $("#currentPage").val(searchPage);
     //searchURL+="&page=0";
-    //console.log(searchURL);
+    console.log(searchURL);
     grabJSON();
 }
 
@@ -318,7 +314,7 @@ function clearSearch(){
     for(var i = 0; i<10; i++){
         dataObject = $("#data" + i);
         dataReps = dataObject.data("num-options");
-        if(dataReps==="many" || dataReps=="1"){
+        if(dataReps==="many" || dataReps==="1"){
             dataObject.val("");
         }else if(dataReps==="sets"){
             dataObject.find(".selected").removeClass("selected");
@@ -327,25 +323,16 @@ function clearSearch(){
         }
     }
     //tagHere: this might cause an error?
-    toggleCardsDisplay("hide");
+    toggleCardsDisplay();
     $("#navBar").hide();
     $("#resultsContainerCards").empty();
 }
 
-function toggleCardsDisplay(whichWay){
-    //waitForImages();
-    var searchResults = $("#searchResults");
-    if(whichWay==="hide"){
-        searchResults.removeClass("shown");
-        searchResults.addClass("notShown");
-    }else if(whichWay==="show"){
-        searchResults.addClass("shown");
-        searchResults.removeClass("notShown");
-    }else{
-        searchResults.toggleClass("shown");
-        searchResults.toggleClass("notShown");
-    }
-    if(searchResults.hasClass("shown")){
+function toggleCardsDisplay(){
+	var searchResults = $("#searchResults")
+	searchResults.toggleClass("shown");
+    searchResults.toggleClass("notShown");
+	if(searchResults.hasClass("shown")){
         searchResults.css("height", getHeightNeeded(searchResults));
     }else{
         searchResults.css("height", searchResults.children().first().outerHeight(true));
@@ -355,7 +342,6 @@ function toggleCardsDisplay(whichWay){
 function changePage(newPage){
     //searchPage = newPageNum;
     //var oldPageDigits = searchPage.toString().length;
-    toggleCardsDisplay("hide");
     var oldPage = searchPage;
     if(newPage==="++"){
         searchPage++;
@@ -374,8 +360,8 @@ function changePage(newPage){
     }
     
     searchURL+=searchPage;
-    $("#currentPageNumber").html(searchPage+1);
-    //console.log(searchURL);
+    $("#currentPageNumber").val(searchPage+1);
+    console.log(searchURL);
     grabJSON();
 }
 
@@ -386,7 +372,7 @@ function grabJSON(){
         //crossDomain: true,
         dataType: 'json',
         success: function(result){
-            //console.log(result);
+            console.log(result);
             buildResults(result);
         },
         error: function(){
@@ -409,16 +395,10 @@ function buildResults(jsonData){
 	}
 	var appendLoc = $("#resultsContainerCards");
 	appendLoc.empty();
-	unloadedImages=0;
 	if(jsonData.length>0){
 		for(var i in jsonData){
 	        appendLoc.append(buildCard(jsonData[i]));
     	}
-        $("img").each(function(){
-            $(this).on("load", function(){
-                unloadedImages--;
-            });
-        });
 	}else{
 		$("#navBar").hide();
 		if(searchPage===0){
@@ -427,20 +407,6 @@ function buildResults(jsonData){
 			appendLoc.append($("<div>Uh oh! This search page did not return any results.</div>"));
 		}
 	}
-	$(".card").on("click", function(){
-	    event.stopPropagation();
-    });
-    toggleCardsDisplay("show");
-}
-
-var unloadedImages = 0;
-function waitForImages(){
-    while(unloadedImages>0){
-        console.log("unloadedImages");
-        setTimeout(function(){
-            console.log(unloadedImages);
-        }, 200);
-    }
 }
 
 function buildCard(cardData){
@@ -467,7 +433,6 @@ function buildCard(cardData){
 			}
 		}
 		returnObject+="><img class='cardImage' src='" + cardData.editions[0].image_url + "'></div>"
-        unloadedImages++;
 	}
 	/*for(i=0; i<cardData.editions.length; i++){
 		upperStats = [cardData.editions[i].rarity, cardData.editions[i].multiverse_id,
@@ -484,3 +449,6 @@ function buildCard(cardData){
 	}*/
     return $(returnObject);
 }
+
+//tagHere: remember to delete the default value in the name entry place
+//tagHere remember to remove all console.logs!
