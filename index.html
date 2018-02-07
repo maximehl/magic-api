@@ -84,17 +84,19 @@
     <div id="searchResults" class="collapsible menu bigMenu canClick bigContainer">
         <h3>Cards</h3>
         <div id="navBar">
-        	<br>
-		    <!--<div id="firstPage" class="pageButton canClick" onclick="changePage(0)">First Page</div>-->
-		    <div id="prevPage" class="pageButton canClick" onclick="changePage('--')">Previous Page</div>
-		    <div class="centerMe">Page number <span id="currentPageNumber">1</span></div><!-- of <span></span>-->
-		    <div id="nextPage" class="pageButton canClick" onclick="changePage('++')">Next Page</div>
-		    <!--<div id="goToPage" class="pageButton canClick"
-		             onclick="changePage($('#pageWanted').val()); $('#pageWanted').val(0);">Go to Page:</div>
-		        <input id="pageWanted" class="floatRight" type="number"
-		               title="Enter the page of results that you'd like to see.">-->
+           <br>
+          <!--<div id="firstPage" class="pageButton canClick" onclick="changePage(0)">First Page</div>-->
+          <div id="prevPage" class="pageButton canClick" onclick="changePage('--')">Previous Page</div>
+          <div class="centerMe">Page number <span id="currentPageNumber">1</span></div><!-- of <span></span>-->
+          <div id="nextPage" class="pageButton canClick" onclick="changePage('++')">Next Page</div>
+          <!--<div id="goToPage" class="pageButton canClick"
+                   onclick="changePage($('#pageWanted').val()); $('#pageWanted').val(0);">Go to Page:</div>
+              <input id="pageWanted" class="floatRight" type="number"
+                     title="Enter the page of results that you'd like to see.">-->
         </div>
-        <div id="resultsContainerCards">No results yet!</div>
+
+        <div id="resultsContainerCards" class="noPadding"><br>No results yet!</div>
+
     </div>
     <!--<div class="collapsible menu bigMenu canClick bigContainer">
         <h3>My Decks</h3>
