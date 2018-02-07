@@ -17,7 +17,8 @@
 * index10: status legality
 */
 var suggestions = [
-    ["Artifact", "Creature", "Enchantment", "Instant", "Land", "Planeswalker", "Sorcery "], //Card Types
+    ["Artifact", "Creature", "Enchantment", "Instant", "Land", "Phenomenon", "Plane",
+        "Planeswalker", "Scheme", "Sorcery"], //Card Types
     [
         ["Clue", "Equipment", "Vehicle"], //Artifact Subtypes
         ["Advisor", "Ally", "Angel", "Ape", "Archer", "Artificer", "Assassin", "Avatar",
@@ -36,14 +37,23 @@ var suggestions = [
         ["Arcane", "Trap"], //Instant Subtypes
         ["Plains", "Island", "Swamp", "Mountain", "Forest", "Desert", "Gate", "Lair", "Locus",
             "Urza's", "Mine", "Power-Plant", "Tower"], //Land Subtypes
+        [], //Phenomenon subtypes
+        ["Alara", "Arkhos", "Azgol", "Belenon", "Bolas's Meditation Realm", "Dominaria",
+            "Equilor", "Ergamon", "Fabacin", "Innistrad", "Iquatana", "Ir", "Kaldheim",
+            "Kamigawa", "Karsus", "Kephalai", "Kinshala", "Kolbahan", "Kyneth", "Lorwyn",
+            "Luvion", "Mercadia", "Mirrodin", "Moag", "Mongseng", "Muraganda", "New Phyrexia",
+            "Phyrexia", "Pyrulea", "Rabiah", "Rath", "Ravnica", "Regatha", "Segovia",
+            "Serra's Realm", "Shadowmoor", "Shandalar", "Ulgrotha", "Valla", "Vryn", "Wildfire",
+            "Xerex", "Zendikar"], //plane subtypes
         ["Ajani", "Angrath", "Arlinn", "Ashiok", "Bolas", "Chandra", "Dack", "Daretti",
             "Domri", "Dovin", "Elspeth", "Freyalise", "Garruk", "Gideon", "Jace", "Karn", "Kaya",
             "Kiora", "Koth", "Liliana", "Nahiri", "Nissa", "Narset", "Nixilis", "Ral", "Saheeli",
             "Samut", "Sarkhan", "Sorin", "Tamiyo", "Teferi", "Tezzeret", "Tibalt", "Ugin",
             "Venser", "Vraska", "Xenagos"], //Planeswalker Subtypes
+        [], //Scheme subtypes
         ["Arcane"] //Sorcery Subtypes
     ], //Card Subtypes: Changes Based On Card Type
-    ["Basic", "Legendary"], //Card Supertypes
+    ["Basic", "Legendary", "Ongoing", "Snow", "World"], //Card Supertypes
     [], //Name: No Suggestions
     ["Absorb", "Affinity", "Aftermath", "Amplify", "Annihilator", "Attach", "Aura swap",
         "Banding", "Bands with other", "Battalion", "Battle cry", "Bestow", "Bloodrush",
@@ -387,7 +397,8 @@ function grabJSON(){
             buildResults(result);
         },
         error: function(){
-            alert('Failed!');
+            alert('Uh oh! There appears to be an error with your entry for Type or Supertype. ' +
+                'Please try different search term.');
         }
     });
 }
