@@ -97,6 +97,11 @@ $(document).ready(function(){
     $("#navBar").on("click", function(){
         event.stopPropagation();
     });
+    $("input, select").on("keypress", function(){
+        if(event.keyCode===13){
+            searchButtonClicked();
+        }
+    });
 });
 
 function addCollapsibleTriggers(objectObject){
